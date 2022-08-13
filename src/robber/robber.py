@@ -71,10 +71,8 @@ third%2Fapps%2Fseat%2Flist%3FappId%3D1000%26deptIdEnc%3Db143e8d5830ee353")
         uesd_seats_url = 'http://office.chaoxing.com/data/apps/seat/getusedseatnums?roomId=' + roomid \
                             + '&startTime=08:00&endTime=17:30&day=' + date
         seats_list = []
-        self.logger.info("正在尝试获取" + roomid + "房间的全部座位列表...")
         ret = requests.get(seats_url, cookies=self.cookies)
         seats_list = ret.json().get("data").get("seatDatas")
-        self.logger.info("正在尝试获取" + roomid + "房间不可用或已预约座位列表...")
         ret = requests.get(switch_url, cookies=self.cookies)
         switch_list = ret.json().get("data").get("seatAttributes")
         unusable_list = []
@@ -82,7 +80,6 @@ third%2Fapps%2Fseat%2Flist%3FappId%3D1000%26deptIdEnc%3Db143e8d5830ee353")
             unusable_list.append(item["seatNum"])
         ret = requests.get(uesd_seats_url, cookies=self.cookies)
         used_list = ret.json().get("data").get("seatNums")
-        self.logger.info("正在尝试获取" + roomid + "房间可预约座位列表...") 
         seats_list = list(map(lambda x:x["seatNum"], list(filter(lambda x: x["seatNum"] not in used_list \
             and x["seatNum"] not in unusable_list, seats_list))))
         self.logger.info("已获取" + roomid + "房间可预约座位列表！还剩" + str(len(seats_list)) + "个座位")
@@ -95,7 +92,7 @@ third%2Fapps%2Fseat%2Flist%3FappId%3D1000%26deptIdEnc%3Db143e8d5830ee353")
         ret = requests.get(uesd_seats_url, cookies=self.cookies)
         used_list = ret.json().get("data").get("seatNums")
         seats_list = list(filter(lambda x: x not in used_list, seats_list))
-        self.logger.info("已刷新" + roomid + "房间可预约座位列表！还剩" + str(len(seats_list)) + ", 正在重新预约...")
+        self.logger.info("已刷新" + roomid + "房间可预约座位列表！还剩" + str(len(seats_list)) + "个座位")
         return seats_list
 
 
@@ -117,10 +114,6 @@ third%2Fapps%2Fseat%2Flist%3FappId%3D1000%26deptIdEnc%3Db143e8d5830ee353")
             # data = ret.json().get("data")
             if success:
                 return [seatNum, date, 1]
-            elif seatNum in self.preferSeats:
-                self.logger.info("此次优先抢票失败")
-            else:
-                self.logger.info("此次普通抢票失败")
         except BaseException as e:
             if ret.status_code == 404:
                 self.logger.error("页面不存在")
@@ -143,6 +136,7 @@ third%2Fapps%2Fseat%2Flist%3FappId%3D1000%26deptIdEnc%3Db143e8d5830ee353")
                         self.logger.info("优先座位预约成功！一楼座位：" + ret[0] + "，时间：" + ret[1])
                         return ret
                     else:
+                        self.logger.info("优先座位预约失败")
                         self._refreshSeatsList(seats_list, '7827', date)
                         if len(seats_list) == 0:
                             return ['', date, 0]
@@ -152,6 +146,7 @@ third%2Fapps%2Fseat%2Flist%3FappId%3D1000%26deptIdEnc%3Db143e8d5830ee353")
                     self.logger.info("非优先座位预约成功！一楼座位：" + ret[0] + "时间：" + ret[1])
                     return ret
                 else:
+                    self.logger.info("普通座位预约失败")
                     self._refreshSeatsList(seats_list, '7827', date)
                     if len(seats_list) == 0:
                         return ['', date, 0]
@@ -173,6 +168,7 @@ third%2Fapps%2Fseat%2Flist%3FappId%3D1000%26deptIdEnc%3Db143e8d5830ee353")
                     seats_list = self._refreshSeatsList(seats_list, '7826', date)
                     if len(seats_list) == 0:
                         return ['', date, 0]  
+
 
 
     ############################## 开始预约 #############################
