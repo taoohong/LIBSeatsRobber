@@ -25,6 +25,11 @@ def getEndTime():
 def now():
     return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+def nowDelta(seconds=0):
+    now = datetime.datetime.now()
+    then = now + datetime.timedelta(seconds=seconds)
+    return then.strftime("%Y-%m-%d %H:%M:%S")
+
 
 def isLater(time, other):
     if time < other:
