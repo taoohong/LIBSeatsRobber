@@ -136,20 +136,21 @@ third%2Fapps%2Fseat%2Flist%3FappId%3D1000%26deptIdEnc%3Db143e8d5830ee353")
                         self.logger.info("优先座位预约成功！一楼座位：" + ret[0] + "，时间：" + ret[1])
                         return ret
                     else:
-                        self.logger.info("优先座位预约失败")
-                        self._refreshSeatsList(seats_list, '7827', date)
-                        if len(seats_list) == 0:
-                            return ['', date, 0]
+                        self.logger.info("优先座位预约失败") 
+            seats_list = self._refreshSeatsList(seats_list, '7827', date)
+            if len(seats_list) == 0:
+                return ['', date, 0] 
             for others in seats_list:
-                ret =  self.orderSeat('7827', others, date)
-                if ret[2] == 1:
-                    self.logger.info("非优先座位预约成功！一楼座位：" + ret[0] + "时间：" + ret[1])
-                    return ret
-                else:
-                    self.logger.info("普通座位预约失败")
-                    self._refreshSeatsList(seats_list, '7827', date)
-                    if len(seats_list) == 0:
-                        return ['', date, 0]
+                if others not in preferSeat:
+                    ret =  self.orderSeat('7827', others, date)
+                    if ret[2] == 1:
+                        self.logger.info("非优先座位预约成功！一楼座位：" + ret[0] + "时间：" + ret[1])
+                        return ret
+                    else:
+                        self.logger.info("普通座位预约失败")
+            seats_list = self._refreshSeatsList(seats_list, '7827', date)
+            if len(seats_list) == 0:
+                return ['', date, 0] 
         
 
 
@@ -165,9 +166,10 @@ third%2Fapps%2Fseat%2Flist%3FappId%3D1000%26deptIdEnc%3Db143e8d5830ee353")
                     self.logger.info("预约成功！三楼座位：" + ret[0] + "时间：" + ret[1])
                     return ret
                 else:
-                    seats_list = self._refreshSeatsList(seats_list, '7826', date)
-                    if len(seats_list) == 0:
-                        return ['', date, 0]  
+                    self.logger.info("普通座位预约失败")
+            seats_list = self._refreshSeatsList(seats_list, '7826', date)
+            if len(seats_list) == 0:
+                return ['', date, 0]  
 
 
 
