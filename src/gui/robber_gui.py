@@ -91,6 +91,7 @@ class MainWin(QWidget):
 
 
     def start(self):
+        self.startButt.setDisabled(True)
         self.worker = Schedule(self.account, self.password, self.config.date)
         self.wthread = QThread()
         self.worker.moveToThread(self.wthread)
@@ -106,6 +107,7 @@ class MainWin(QWidget):
 
     def workFinished(self, str):
         QMessageBox.information(self, '完成', str, QMessageBox.Yes)
+        self.startButt.setDisabled(False)
 
 
     def showLoginDialog(self):
@@ -125,11 +127,13 @@ class MainWin(QWidget):
 
     def exceptionHandler(self, type, str):
         if type == ScheException.EXCEPTION:
-            QMessageBox.warning(self, "错误", "出问题了", QMessageBox.Yes)
+            QMessageBox.warning(self, "错误", str, QMessageBox.Yes)
         elif type == ScheException.MISS:
             QMessageBox.warning(self, "错误", "不看看现在几点吗，来不及了", QMessageBox.Yes)
         self.wthread.quit()
         self.showLoginDialog()
+        self.startButt.setDisabled(False)
+
 
 def main():
     app = QApplication(sys.argv)

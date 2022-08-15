@@ -1,3 +1,4 @@
+from multiprocessing.connection import wait
 from PyQt5.QtCore import QObject, pyqtSignal
 from robber.robber import Robber
 from enum import Enum
@@ -35,13 +36,15 @@ class Schedule(QObject):
         if date == 'tomorrow':
             self.processing.emit("等待系统开启...")
             self.scheduler.add_job(self.robber.getCookiesAndToken, 'date', run_date=utils.getTodayReadyTime())
-            self.scheduler.add_job(self.robber.startOrdering, 'date', run_date=utils.getToday() + ' 18:00:00', \
+            self.scheduler.add_job(self.robber.startOrdering, 'date', run_date=utils.getToday() + ' 18:00:01', \
                     kwargs={'date': utils.getTomorrow()})
         else:
             self.processing.emit("17点之前每10分钟扫描一回，请勿关闭程序...")
-            now = datetime.datetime.now()
+            now = utils.now()
             end = utils.getToday() + ' 17:00:00'
-            # scheduler.add_job(self.test, 'date', run_date=now + datetime.timedelta(seconds=2))
+            if utils.isLater(now, end):
+                self.exception.emit(ScheException.EXCEPTION, "时间过了")
+                return
             self.scheduler.add_job(self.robber.getCookiesAndToken, 'interval', minutes=10, \
                 start_date=now + datetime.timedelta(seconds=2), end_date=end)
             self.scheduler.add_job(self.robber.startOrdering, 'interval', minutes=10, \
@@ -52,7 +55,7 @@ class Schedule(QObject):
 
 
     def eventHandler(self, ev):
-        self.scheduler.remove_all_jobs()
+        self.scheduler.remove_listener(self.eventHandler)
         if ev.exception:
             self.exception.emit(ScheException.EXCEPTION, ev.traceback)
         else:
@@ -61,16 +64,11 @@ class Schedule(QObject):
 
     def succesHandler(self, ev):
         if ev.retval:
-            if ev.retval[2]:
+            if len(ev.retval) > 2 and ev.retval[2]:
                 self.finished.emit("座位:"+ev.retval[0] + " , 时间:" + ev.retval[1])
             else:
                 self.finished.emit("预约失败")
 
-    # def test(self):
-    #     for i in range(10):
-    #         time.sleep(1)
-    #         self.processing.emit(self.acc)
-    #     self.finished.emit("任务完成")
 
 class ScheException(Enum):
     EXCEPTION = 1,
