@@ -62,7 +62,7 @@ class MainWin(QWidget):
         
         self.setLayout(mainLayout)
         # use absolute path for exe packaging
-        self.setWindowIcon(QIcon('D:\Programs\HuaiNingLibrary\icon.ico'))
+        self.setWindowIcon(QIcon('./icon.ico'))
         self.resize(1000, 600)
         self._center()
         self.setWindowTitle('怀宁图书馆恶霸小叮当')

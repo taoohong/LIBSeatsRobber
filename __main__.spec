@@ -3,12 +3,13 @@
 
 block_cipher = None
 
+add_file = (("icon.ico", "."))
 
 a = Analysis(
-    ['d:\\Programs\\HuaiNingLibrary\\src\\__main__.py'],
+    ['src\\__main__.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[add_file],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

@@ -35,12 +35,12 @@ class Schedule(QObject):
         self.scheduler = QtScheduler()
         if date == 'tomorrow':
             self.processing.emit("等待系统开启...")
-            # self.scheduler.add_job(self.robber.getCookiesAndToken, 'date', run_date=utils.getTodayReadyTime())
-            # self.scheduler.add_job(self.robber.startOrdering, 'date', run_date=utils.getToday() + ' 18:00:01', \
-            #         kwargs={'date': utils.getTomorrow()})
-            self.scheduler.add_job(self.robber.getCookiesAndToken, 'date', run_date=utils.nowDelta(2))
-            self.scheduler.add_job(self.robber.startOrdering, 'date', run_date=utils.nowDelta(8), \
+            self.scheduler.add_job(self.robber.getCookiesAndToken, 'date', run_date=utils.getTodayReadyTime())
+            self.scheduler.add_job(self.robber.startOrdering, 'date', run_date=utils.getToday() + ' 18:00:01', \
                     kwargs={'date': utils.getTomorrow()})
+            # self.scheduler.add_job(self.robber.getCookiesAndToken, 'date', run_date=utils.nowDelta(2))
+            # self.scheduler.add_job(self.robber.startOrdering, 'date', run_date=utils.nowDelta(8), \
+            #         kwargs={'date': utils.getTomorrow()})
         else:
             self.processing.emit("17点之前每10分钟扫描一回，请勿关闭程序...")
             now = utils.now()

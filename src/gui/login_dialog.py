@@ -42,7 +42,7 @@ class LoginDialog(QDialog):
         btn2.clicked[bool].connect(self.sendCencelButt)
         input1.textChanged.connect(self.setAccount)
         input2.textChanged.connect(self.setPassword)
-        self.setWindowIcon(QIcon('D:\Programs\HuaiNingLibrary\icon.ico'))
+        self.setWindowIcon(QIcon('./icon.ico'))
         self.resize(350, 200)
         self._center()
         self.setWindowTitle('先登录')

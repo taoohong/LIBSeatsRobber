@@ -5,7 +5,7 @@ def getToday():
     return datetime.datetime.now().strftime("%Y-%m-%d")
 
 def getTodayReadyTime():
-    return getToday() + " 17:59:55"
+    return getToday() + " 17:59:52"
 
 
 def getTomorrow():
