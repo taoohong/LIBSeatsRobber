@@ -4,15 +4,14 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 import re, os, time, requests
 from bs4 import BeautifulSoup
-from robber.logging_guihandler import GuiHandler
 import time
 
 class Robber():
     def __init__(self, account, password):
         self.account = account
         self.password = password
-        self.preferSeats = ['052', '054', '058', '060', '064', '070', 
-                            '072', '066', '040', '046', '048', '042']
+        self.preferSeats = ['058', '070', '072', '066', '040', '046', 
+                             '048', '042', '052', '064', '054', '060']
         self.logger = logging.getLogger(__name__)
         formatter = logging.Formatter(
             '%(asctime)s-%(name)s-%(levelname)s-%(module)s: %(message)s',
@@ -21,9 +20,9 @@ class Robber():
         fileHandler = logging.FileHandler(os.path.join(os.getcwd(), './log.txt') , \
             mode='w+', encoding='utf-8', delay=False)
         fileHandler.setFormatter(formatter)
-        guiHandler = GuiHandler()
-        guiHandler.setFormatter(formatter)
-        self.logger.addHandler(guiHandler)
+        streamHandler = logging.StreamHandler()
+        streamHandler.setFormatter(formatter)
+        self.logger.addHandler(streamHandler)
         self.logger.addHandler(fileHandler)
         self.logger.setLevel(logging.INFO)
 
